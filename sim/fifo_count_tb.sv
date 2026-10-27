@@ -15,16 +15,16 @@ module fifo_count_tb;
   logic             rd_en   = 0;
   logic [WIDTH-1:0] wr_data = '0;
 
-  // ---------- FIFO outputs ----------
+  // FIFO outputs 
   logic [WIDTH-1:0] rd_data;
   logic             empty;
   logic             full;
 
-  // ---------- reference model: the answer key ----------
+  //reference model 
   logic [WIDTH-1:0] model [$];     // a queue: push_back on write, pop_front on read
   int errors = 0;
 
-  // ---------- coverage counters: did we really test the corner cases? ----------
+  //  coverage counters: to test the corner cases
   int n_writes = 0, n_reads = 0, n_both = 0;
   int n_full = 0, n_empty = 0, n_wr_refused = 0, n_rd_refused = 0;
 
@@ -40,7 +40,7 @@ module fifo_count_tb;
     .o_Full    (full)
   );
 
-  // ---------- compare the FIFO's outputs with the model ----------
+  //  compare the FIFO's outputs with the model 
   task automatic check_fifo();
     bit exp_empty = (model.size() == 0);
     bit exp_full  = (model.size() == DEPTH);
@@ -58,7 +58,7 @@ module fifo_count_tb;
     end
   endtask
 
-  // ---------- one clock: check, then drive new inputs, then update the model ----------
+  //one clock: check, then drive new inputs, then update the model
   task automatic step(bit wr, bit rd, logic [WIDTH-1:0] data);
     bit can_wr, can_rd;
     @(negedge clk);                          // middle of the clock: everything is stable
@@ -87,7 +87,7 @@ module fifo_count_tb;
   endtask
 
   initial begin
-    // ---------- directed tests ----------
+    //  directed tests 
     $display("Directed tests");
     step(1, 0, 8'hA1); step(1, 0, 8'hA2); step(1, 0, 8'hA3);      // 3 writes
     step(0, 1, '0);    step(0, 1, '0);    step(0, 1, '0);         // 3 reads, in order
@@ -98,7 +98,7 @@ module fifo_count_tb;
     step(1, 0, 8'h55); step(1, 1, 8'h66); step(0, 1, '0);         // write + read in the same clock
     step(0, 0, '0);                                               // one more check
 
-    // ---------- random test ----------
+    //  random test 
     // Four phases: mostly writes, mostly reads, balanced, then anything.
     $display("Random test, %0d cycles", CYCLES);
     for (int i = 0; i < CYCLES; i++) begin
@@ -115,14 +115,13 @@ module fifo_count_tb;
     end
     step(0, 0, '0);
 
-    // ---------- report ----------
-    $display("----------------------------------");
+    //  report 
+   
     $display("Accepted: %0d writes, %0d reads, %0d same-clock write+read", n_writes, n_reads, n_both);
     $display("Clocks full: %0d, clocks empty: %0d", n_full, n_empty);
     $display("Refused: %0d writes when full, %0d reads when empty", n_wr_refused, n_rd_refused);
     if (errors == 0) $display("TEST PASSED: 0 errors");
     else             $display("TEST FAILED: %0d errors", errors);
-    $display("----------------------------------");
     $finish;
   end
 
