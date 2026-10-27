@@ -1,6 +1,5 @@
 // Synchronous FIFO, method A: a count register gives full and empty.
 // This is the FIFO used in the UART echo (uart-rtl-validation-spartan7), converted to SystemVerilog.
-// DEPTH must be a power of 2 (4, 8, 16, ...) so the pointers wrap by themselves.
 module fifo_count #(
   parameter int WIDTH = 8,     // bits per slot
   parameter int DEPTH = 16     // number of slots
@@ -17,13 +16,13 @@ module fifo_count #(
   output logic             o_Full
 );
 
-  localparam int PTR_W = $clog2(DEPTH);       // 16 slots -> 4-bit pointers
+  localparam int PTR_W = $clog2(DEPTH);       // 16 slots - 4-bit pointers
 
   // ---------- storage ----------
   logic [WIDTH-1:0] r_Mem [DEPTH];
   logic [PTR_W-1:0] r_Wr_Ptr = '0;            // where the next byte goes
   logic [PTR_W-1:0] r_Rd_Ptr = '0;            // the oldest byte
-  logic [PTR_W:0]   r_Count  = '0;            // 0..DEPTH -> one bit wider than a pointer
+  logic [PTR_W:0]   r_Count  = '0;            // 0..DEPTH - one bit wider than a pointer
 
   // ---------- safety rules ----------
   logic w_Wr, w_Rd;
@@ -34,7 +33,7 @@ module fifo_count #(
   always_ff @(posedge i_Clk) begin
     if (w_Wr) begin
       r_Mem[r_Wr_Ptr] <= i_Wr_Data;
-      r_Wr_Ptr        <= r_Wr_Ptr + 1'b1;     // wraps 15 -> 0
+      r_Wr_Ptr        <= r_Wr_Ptr + 1'b1;     // wraps 15 to 0
     end
 
     if (w_Rd)
