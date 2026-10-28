@@ -1,0 +1,7 @@
+----------------------------------
+Accepted: 1614 writes, 1611 reads, 497 same-clock write+read
+Clocks full: 1257, clocks empty: 1311
+Refused: 883 writes when full, 926 reads when empty
+TEST PASSED: 0 errors
+----------------------------------
+$finish called at time : 50210 ns
