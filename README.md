@@ -1,4 +1,4 @@
-# Synchronous FIFO in SystemVerilog: two designs compared
+# Synchronous FIFO in SystemVerilog
 
 A synchronous FIFO (first in, first out) designed in two different ways, each verified with
 a self-checking testbench and then synthesized and timed in Vivado for a Spartan-7 FPGA
